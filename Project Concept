@@ -1,0 +1,77 @@
+Chris Fowles --- Daniel Barton --- Jonathan Dolan
+
+Project Concept – Math Game – Fire Breathing Penguins
+
+  As a means of teaching math skills to first and second grade children, we are developing 
+
+a math based baseball game. The game will test, and help teach, students on their math abilities 
+
+by making the learning activity fun and engaging. For correct answers, dependent on the 
+
+difficulty of that question, the student will be given a base hit (single through homeruns). They 
+
+will continue to ‘bat’ until they choose to leave the game. The runs they have scored as a 
+
+culmination of their correct answers will be readily available to the students so they can track 
+
+their progress and attempt to get a high score. In addition to this simple measure of success, 
+
+other more telling variables of success will be measured for the teacher to access. To do this each 
+
+student will login with a username and password, and their results will be kept tied to their 
+
+account. 
+
+  To make the game age appropriate it will be less about the rules of baseball and more 
+
+about editing a couple of features of the team, name and color for example, and batting to score 
+
+runs by answering the math questions. This will keep the students engaged without discouraging 
+
+them by making it too complex or competitive. The software not only tests the students on their 
+
+knowledge but also provides feedback to help initiate future learning. Incorrect answers result in 
+
+a splash page where the correct answer is shown along with keywords such as sum, or addition. 
+
+The use of baseball as a backdrop is meant for entertainment and idea retention but the main 
+
+focus of the software is teaching math concepts.
+
+  The primary users of this software will be first and second grade students in need of 
+
+improved math skills. Since these users only have basic computer skills all of the applications 
+
+controls will be achieved by readily marked mouse clicks, or required easy to enter text. When 
+
+entering answers to the questions asked by the game the student’s will be required to either click 
+
+the correct answer out of a set of possibilities, or will be required to enter the correct answer in a 
+
+data field. To keep a typically low focus group engaged the program will have the entertaining 
+
+aspects of baseball, including player names and team colors, along with bright colors and 
+
+interactive noises. Examples of this would be the noise of the crack of a bat after the child has 
+
+gotten an answer correct.
+
+  The secondary users of the software will be the teachers, who will require extra 
+
+information in regards to student progression. For these users there will be some added 
+
+complexity in the form of drop down boxes, and student look ups, but they will also have added 
+
+variable information on each of their students. Some examples of these variables are; runs 
+
+scored, percent of question type correct, and overall percentage of answers correct. 
+
+The software will be opened and setup by the teachers, so upon startup the user will have 
+
+the option of entering teacher or student mode. In teacher mode the instructor can login and 
+
+access all of the student data through a drop down menu. In student mode, the child will login
+
+with their information (which will likely be kept by the teacher). They are then taken to a main 
+
+menu where they can choose to edit their information, play a new game, or view game history.
