@@ -7,10 +7,15 @@ public class MathBaseball {
 	static Random generator = new Random();
 	static Scanner scanner = new Scanner(System.in);
 	static Student student = new Student();
-	static PlayBall gui = new PlayBall();
+    static PlayBall gui;
 	static int answer;
+
+    public static void makeGui(char t){
+        gui = new PlayBall(t);
+        gui.beginGame();
+    }
 	
-	public static void answerRecieved(int input, char type){
+	public static void answerReceived(int input, char type){
 		if (input == answer){
 			gui.displayCorrect();
 		}
@@ -34,13 +39,14 @@ public class MathBaseball {
 		int input;
 		if (type == 1){ // addition
 			gui.displayAdditionQuestion(a, b);
-			//System.out.println(a + " + " + b + " = ");
+
 		//	input = scanner.nextInt();
 			answer = a + b;
+
 			
 	}
 		else if (type == 2){ // subtraction
-			if (a > b){
+			if (a < b){
 				int temp;
 				temp = a;
 				a = b;
@@ -112,7 +118,7 @@ public class MathBaseball {
 	}
 	
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		System.out.println("Please type the maximum number for questions.");
 		int max = scanner.nextInt();
 		while (true){
@@ -121,6 +127,6 @@ public class MathBaseball {
 			MathBaseball.generateQuestion(max, type);
 			
 		}
-	}
+	}*/
 
 }

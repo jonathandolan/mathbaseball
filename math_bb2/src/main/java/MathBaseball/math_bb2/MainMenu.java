@@ -19,11 +19,17 @@ public class MainMenu extends JPanel implements MouseListener {
     private JButton viewStatsButton;
     private JButton manageTeamButton;
     private JLabel playBallLabel;
-    private Main frame;
+    private PlayBall gui;
+    private ManageTeam mTeam;
+    private ViewStats vStats;
 
     public MainMenu() {
         playBallLabel.addMouseListener(this);
         playBallLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        viewStatsButton.addMouseListener(this);
+        viewStatsButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        manageTeamButton.addMouseListener(this);
+        manageTeamButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
 
@@ -31,8 +37,15 @@ public class MainMenu extends JPanel implements MouseListener {
         Object source = e.getSource();
 
         if (source == playBallLabel) {
-            PlayBall play = new PlayBall();
-            frame = new Main(play.$$$getRootComponent$$$());
+            PlayBall p = new PlayBall();
+            //PlayBall gui = new PlayBall();
+            //gui.beginGame();
+        }
+        if(source == viewStatsButton){
+            vStats = new ViewStats();
+        }
+        if(source == manageTeamButton){
+            mTeam = new ManageTeam();
         }
     }
 
