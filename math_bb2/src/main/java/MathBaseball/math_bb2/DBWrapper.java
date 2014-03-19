@@ -1,10 +1,12 @@
 package MathBaseball.math_bb2;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class DBWrapper {
     
@@ -36,7 +38,7 @@ public class DBWrapper {
         }
     }
     
-    public void addNewtudent(String username, String password ,String firstName, String lastName, String teacherUserName) {
+    public void addNewStudent(String username, String password ,String firstName, String lastName, String teacherUserName) {
         PreparedStatement newData1 = null;
         PreparedStatement newData2 = null;
         PreparedStatement teacherIDFinder = null;
@@ -260,12 +262,298 @@ public class DBWrapper {
     }
     
     
+    public int getScoreForStudent(String username) {
+    	int score = 0;
+    	int studentID = -1;
+    	ArrayList<Integer> gameIDs = new ArrayList<Integer>();
+        PreparedStatement studentFinder = null;
+        PreparedStatement gameFinder = null;
+        PreparedStatement scoreFinder = null;
+        
+        try {
+            
+        	//Get student ID
+            studentFinder = connect.prepareStatement(
+                " select userID from User " +
+                " where username = ?; ");
+            studentFinder.setString(1, username);
+            ResultSet id = studentFinder.executeQuery();
+            if (id.next()) {
+                studentID = id.getInt(1);
+            }
+            
+            //Get the students games
+            gameFinder = connect.prepareStatement(
+            		" select gameID from GameResult " +
+            		" where studentID = ? ; ");
+            gameFinder.setInt(1, studentID);
+            ResultSet games = gameFinder.executeQuery();
+            while (games.next()) {
+            	gameIDs.add(games.getInt(1));
+            }
+            
+            //Get the scores 
+            for(int gameID : gameIDs) {
+            	scoreFinder = null;
+            	scoreFinder = connect.prepareStatement(
+            			" select numberOfCorrectAnswers from GameScore " +
+            			" where gameID = ? ; ");
+            	scoreFinder.setInt(1, gameID);
+            	ResultSet gameScore = scoreFinder.executeQuery();
+            	if (gameScore.next()) {
+            		score = score + gameScore.getInt(1);
+            	}
+            }
+            
+        } catch (SQLException sqex) {
+            System.err.println(sqex.toString());
+        } finally {
+            if (studentFinder != null) {
+                try { studentFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+            if (gameFinder != null) {
+                try { gameFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+            if (scoreFinder != null) {
+                try { scoreFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+        }
+        
+        return score;
+    	
+    }
+    
+    public int getNumberOfQuestionsForStudent(String username) {
+    	int numberOfQuestions = 0;
+    	int studentID = -1;
+    	ArrayList<Integer> gameIDs = new ArrayList<Integer>();
+        PreparedStatement studentFinder = null;
+        PreparedStatement gameFinder = null;
+        PreparedStatement numberOfQuestionsFinder = null;
+        
+        try {
+            
+        	//Get student ID
+            studentFinder = connect.prepareStatement(
+                " select userID from User " +
+                " where username = ?; ");
+            studentFinder.setString(1, username);
+            ResultSet id = studentFinder.executeQuery();
+            if (id.next()) {
+                studentID = id.getInt(1);
+            }
+            
+            //Get the students games
+            gameFinder = connect.prepareStatement(
+            		" select gameID from GameResult " +
+            		" where studentID = ? ; ");
+            gameFinder.setInt(1, studentID);
+            ResultSet games = gameFinder.executeQuery();
+            while (games.next()) {
+            	gameIDs.add(games.getInt(1));
+            }
+            
+            //Get the number of questions
+            for(int gameID : gameIDs) {
+            	numberOfQuestionsFinder = null;
+            	numberOfQuestionsFinder = connect.prepareStatement(
+            			" select numberOfQuestions from GameScore " +
+            			" where gameID = ? ; ");
+            	numberOfQuestionsFinder.setInt(1, gameID);
+            	ResultSet gameScore = numberOfQuestionsFinder.executeQuery();
+            	if (gameScore.next()) {
+            		numberOfQuestions = numberOfQuestions + gameScore.getInt(1);
+            	}
+            }
+            
+        } catch (SQLException sqex) {
+            System.err.println(sqex.toString());
+        } finally {
+            if (studentFinder != null) {
+                try { studentFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+            if (gameFinder != null) {
+                try { gameFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+            if (numberOfQuestionsFinder != null) {
+                try { numberOfQuestionsFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+        }
+        
+        return numberOfQuestions;
+    	
+    }
+    
+    public ArrayList<StudentInfo> getStudentInfoForTeacher(String teacherUsername) {
+    	int teacherID = -1;
+    	ArrayList<StudentInfo> studentInfo = new ArrayList<StudentInfo>();
+    	ArrayList<Integer> studentIDs = new ArrayList<Integer>();
+        PreparedStatement teacherFinder = null;
+        PreparedStatement studentFinder = null;
+        PreparedStatement studentInfoFinder = null;
+        
+        try {
+            
+        	//Get teacher ID
+            teacherFinder = connect.prepareStatement(
+                " select userID from User " +
+                " where username = ?; ");
+            teacherFinder.setString(1, teacherUsername);
+            ResultSet id = teacherFinder.executeQuery();
+            if (id.next()) {
+                teacherID = id.getInt(1);
+            }
+            
+            //Get the teacher's students
+            studentFinder = connect.prepareStatement(
+            		" select studentID from Student " +
+            		" where teacherID = ? ; ");
+            studentFinder.setInt(1, teacherID);
+            ResultSet students = studentFinder.executeQuery();
+            while (students.next()) {
+            	studentIDs.add(students.getInt(1));
+            }
+            
+            //Get the students' info
+            for(int studentID : studentIDs) {
+            	studentInfoFinder = null;
+            	studentInfoFinder = connect.prepareStatement(
+            			" select username, password, firstName, lastName from User " +
+            			" where userID = ? ; ");
+            	studentInfoFinder.setInt(1, studentID);
+            	ResultSet userInfo = studentInfoFinder.executeQuery();
+            	if (userInfo.next()) {
+            		studentInfo.add(new StudentInfo(userInfo.getString(3), userInfo.getString(4), userInfo.getString(1), userInfo.getString(2)));
+            	}
+            }
+            
+        } catch (SQLException sqex) {
+            System.err.println(sqex.toString());
+        } finally {
+            if (teacherFinder != null) {
+                try { teacherFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+            if (studentFinder != null) {
+                try { studentFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+            if (studentInfoFinder != null) {
+                try { studentInfoFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+        }
+        
+        return studentInfo;
+    }
+    
+    public void changeUsername(String oldUsername, String newUsername) {
+        PreparedStatement newData = null;
+        
+        try {
+            newData = connect.prepareStatement(
+                " update User set username = ? " + 
+                " where username = ? ; ");
+            newData.setString(1, newUsername);
+            newData.setString(2, oldUsername);
+            newData.executeUpdate();
+            connect.commit();
+        
+        } catch (SQLException sqex) {
+            try { connect.rollback(); System.err.println(sqex.toString()); }
+            catch (SQLException sqex2) { System.err.println("Dammit\n" + sqex2.toString()); }
+        } finally {
+            if (newData != null) {
+                try { newData.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+        }        
+    }
+    
+    public void changePassword(String username, String newPassword) {
+    	PreparedStatement newData = null;
+        
+        try {
+            newData = connect.prepareStatement(
+                " update User set password = ? " + 
+                " where username = ? ; ");
+            newData.setString(1, newPassword);
+            newData.setString(2, username);
+            newData.executeUpdate();
+            connect.commit();
+        
+        } catch (SQLException sqex) {
+            try { connect.rollback(); System.err.println(sqex.toString()); }
+            catch (SQLException sqex2) { System.err.println("Dammit\n" + sqex2.toString()); }
+        } finally {
+            if (newData != null) {
+                try { newData.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+        }     
+    }
+    
+    public void changeFirstName(String username, String newFirstName) {
+    	PreparedStatement newData = null;
+        
+        try {
+            newData = connect.prepareStatement(
+                " update User set firstName = ? " + 
+                " where username = ? ; ");
+            newData.setString(1, newFirstName);
+            newData.setString(2, username);
+            newData.executeUpdate();
+            connect.commit();
+        
+        } catch (SQLException sqex) {
+            try { connect.rollback(); System.err.println(sqex.toString()); }
+            catch (SQLException sqex2) { System.err.println("Dammit\n" + sqex2.toString()); }
+        } finally {
+            if (newData != null) {
+                try { newData.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+        }     
+    }
+    
+    public void changeLastName(String username, String newLastName) {
+    	PreparedStatement newData = null;
+        
+        try {
+            newData = connect.prepareStatement(
+                " update User set lastName = ? " + 
+                " where username = ? ; ");
+            newData.setString(1, newLastName);
+            newData.setString(2, username);
+            newData.executeUpdate();
+            connect.commit();
+        
+        } catch (SQLException sqex) {
+            try { connect.rollback(); System.err.println(sqex.toString()); }
+            catch (SQLException sqex2) { System.err.println("Dammit\n" + sqex2.toString()); }
+        } finally {
+            if (newData != null) {
+                try { newData.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+        }     
+    }
+    
+    
     public static void main(String[] aargh) throws SQLException {
         DBWrapper dbw = new DBWrapper();
         
         //System.out.println(dbw.startNewGame("cfowles"));
         //dbw.correctAnswer(6);
         //dbw.incorrectAnswer(6);
+        //System.out.println(dbw.getNumberOfQuestionsForStudent("cfowles"));
+        //dbw.addNewStudent("Jazz", "Olshen", "jolshen", "123", "ggagne");
+//        for(StudentInfo student : dbw.getStudentInfoForTeacher("ggagne")) {
+//        	System.out.print(student.getFirstName());
+//        	System.out.print(" ");
+//        	System.out.print(student.getLastName());
+//        	System.out.print(" ");
+//        	System.out.print(student.getUsername());
+//        	System.out.print(" ");
+//        	System.out.print(student.getPassword());
+//        	System.out.println();
+//        	
+//        }
+//        dbw.changeFirstName("djb0118", "dan");
+//        dbw.changeLastName("djb0118", "barton");
         
         dbw.close();
     }

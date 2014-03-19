@@ -1,16 +1,28 @@
 package MathBaseball.math_bb2;
 
+import java.sql.SQLException;
 import java.util.Random;
 import java.util.Scanner;
 
-public class MathBaseball {
+public class MathBaseball{
 	static Random generator = new Random();
 	static Scanner scanner = new Scanner(System.in);
 	static Student student = new Student();
     static PlayBall gui;
 	static int answer;
-	//static DBWrapper dataBase = new DBWrapper();
-
+	static int player;
+	static DBWrapper dataBase;
+	
+	public MathBaseball(int playerId){
+		try {
+			dataBase = new DBWrapper();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		player = playerId;
+	}
+	
     public static void makeGui(char t){
         gui = new PlayBall(t);
         gui.beginGame();
@@ -19,16 +31,20 @@ public class MathBaseball {
 	public static void answerReceived(int input, char type){
 		if (input == answer){
 			gui.displayCorrect();
+			dataBase.correctAnswer(player);
 		}
 		else{
 			if (type == 'a'){
 				gui.displayWrongAdd(answer);
+				dataBase.incorrectAnswer(player);
 			}
 			else if (type == 's'){
 				gui.displayWrongSub(answer);
+				dataBase.incorrectAnswer(player);
 			}
 			else{
 				gui.displayWrongPlaces(answer);
+				dataBase.incorrectAnswer(player);
 			}
 		}
 	}
