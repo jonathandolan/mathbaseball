@@ -9,6 +9,7 @@ public class MathBaseball {
 	static Student student = new Student();
     static PlayBall gui;
 	static int answer;
+	//static DBWrapper dataBase = new DBWrapper();
 
     public static void makeGui(char t){
         gui = new PlayBall(t);
