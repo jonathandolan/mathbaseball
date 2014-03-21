@@ -1,5 +1,4 @@
 package MathBaseball.math_bb2;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -533,29 +532,36 @@ public class DBWrapper {
     }
     
     
-    public static void main(String[] aargh) throws SQLException {
-        DBWrapper dbw = new DBWrapper();
-        
-        //System.out.println(dbw.startNewGame("cfowles"));
-        //dbw.correctAnswer(6);
-        //dbw.incorrectAnswer(6);
-        //System.out.println(dbw.getNumberOfQuestionsForStudent("cfowles"));
-        //dbw.addNewStudent("Jazz", "Olshen", "jolshen", "123", "ggagne");
-//        for(StudentInfo student : dbw.getStudentInfoForTeacher("ggagne")) {
-//        	System.out.print(student.getFirstName());
-//        	System.out.print(" ");
-//        	System.out.print(student.getLastName());
-//        	System.out.print(" ");
-//        	System.out.print(student.getUsername());
-//        	System.out.print(" ");
-//        	System.out.print(student.getPassword());
-//        	System.out.println();
-//        	
-//        }
-//        dbw.changeFirstName("djb0118", "dan");
-//        dbw.changeLastName("djb0118", "barton");
-        
-        dbw.close();
+    public static void main(String[] args) throws SQLException {
+    	DBWrapper db = new DBWrapper();
+    	ArrayList<StudentInfo> students;
+    	db.addNewTeacher("Greg", "Gagne", "ggagne", "softawre");
+    	db.addNewStudent("cfowles", "s", "Chris", "Fowles", "ggagne");
+    	db.addNewStudent("jdolan", "a", "Jonathan", "Dolan", "ggagne");
+    	int j = db.startNewGame("jdolan");
+	    int c = db.startNewGame("cfowles");
+	    db.correctAnswer(j);
+	    db.correctAnswer(j);
+	    db.correctAnswer(j);
+	    db.correctAnswer(j);
+	    db.incorrectAnswer(j);
+	    
+	    db.incorrectAnswer(c);
+	    db.incorrectAnswer(c);
+	    db.correctAnswer(c);
+	    db.correctAnswer(c);
+	    db.correctAnswer(c);
+	    
+	    students = db.getStudentInfoForTeacher("ggagne");
+	    
+	    for (StudentInfo s : students){
+	    	System.out.println(s.getFirstName()+ " " + s.getLastName());
+	    }
+	    
+	    
+	    db.close();
     }
+
+    
     
 }
