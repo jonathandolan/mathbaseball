@@ -3,6 +3,7 @@ package MathBaseball.math_bb2;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -39,6 +40,7 @@ public class Main extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
     }
+
 
     public static void main(String[] args) throws IOException {
         Main m = new Main();

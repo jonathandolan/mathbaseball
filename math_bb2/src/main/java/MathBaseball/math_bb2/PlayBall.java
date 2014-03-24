@@ -42,11 +42,13 @@ public class PlayBall extends JFrame implements MouseListener {
     private JButton placeGame;
     private JButton allGame;
     private boolean allQ;
+    private int gameID;
+    DBWrapper dBase;
 
-    public PlayBall(char type) {
+    public PlayBall(char type, DBWrapper db) {
 
         super("Math Baseball");
-
+        dBase = db;
         setSize(WIDTH, HEIGHT);
         setBackground(Color.WHITE);
         $$$setupUI$$$();
@@ -57,31 +59,42 @@ public class PlayBall extends JFrame implements MouseListener {
         questionType = type;
         if(questionType == 'r')
             allQ = true;
+        gameID = db.startNewGame(MainMenu.studentUserName);
 
         SWINGButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
-                answer = textField1.getText();
-                if(qAnswered){
-                    MathBaseball.answerReceived(Integer.parseInt(answer), questionType);
-                    textField1.setText("");
-                } else {
-                	int max = 30;
-                    int type = 1;
-                    if(allQ)
-                	 type = gen.nextInt(2) + 1;
-                    else{
-                        if(questionType == 'a')
-                            MathBaseball.generateQuestion(max, 1);
-                        else if(questionType == 's')
-                            MathBaseball.generateQuestion(max, 2);
-                        else
-                            MathBaseball.generateQuestion(max, 3);
+                new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        answerQuestion();
+                        return null;
                     }
-                	MathBaseball.generateQuestion(max, type);
-                }
+                }.execute();
             }
-        });
+        });}
+
+        private void answerQuestion(){
+        answer = textField1.getText();
+        if(qAnswered){
+            MathBaseball.answerReceived(Integer.parseInt(answer), questionType);
+            textField1.setText("");
+        } else {
+            int max = 50;
+            int type = 1;
+            if(allQ){
+            type = gen.nextInt(2) + 1;
+            }
+            else{
+            if(questionType == 'a')
+                    MathBaseball.generateQuestion(max, 1);
+            else if(questionType == 's'){
+                    MathBaseball.generateQuestion(max, 2);
+                }
+            else
+                    MathBaseball.generateQuestion(max, 3);
+            }
+            MathBaseball.generateQuestion(max, type);
+        }
 
         textField1.getDocument().addDocumentListener(new DocumentListener() {
             //Listen for changes in the text.
@@ -97,9 +110,10 @@ public class PlayBall extends JFrame implements MouseListener {
         });
     }
 
-    public PlayBall(){
+    public PlayBall(DBWrapper db){
         super("Math Baseball");
 
+        dBase = db;
         setSize(WIDTH, HEIGHT);
         setBackground(Color.WHITE);
         firstScreen();
@@ -139,6 +153,7 @@ public class PlayBall extends JFrame implements MouseListener {
     private String buildQuestion(int one, int two){
         SWINGButton.setText("SWING");
         String s;
+        System.out.println("Build Question: " + questionType);
         if(questionType == 'a'){
           s = ("What is the SUM of " + one + " and " + two +"? " + one + " + " + two + " = ");
         }
@@ -205,7 +220,8 @@ public class PlayBall extends JFrame implements MouseListener {
     }
 
     public void displayCorrect(){
-        score++;
+        dBase.correctAnswer(gameID);
+        score = dBase.getScoreForStudent(MainMenu.studentUserName);
         textPane1.setText("");
         generatePlayerName();
         textPane1.setText("GOOD JOB! That was the correct answer.\n"
@@ -217,6 +233,7 @@ public class PlayBall extends JFrame implements MouseListener {
     }
 
     public void displayWrongAdd(int c){
+        dBase.incorrectAnswer(gameID);
         textPane1.setText("");
         generatePlayerName();
         textPane1.setText("Nice try, but that was INCORRECT.\n" + atBatPlayer + " WHIFFED\n" + "The right answer was " + c);
@@ -224,6 +241,7 @@ public class PlayBall extends JFrame implements MouseListener {
     }
 
     public void displayWrongSub(int c){
+        dBase.incorrectAnswer(gameID);
         textPane1.setText("");
         generatePlayerName();
         textPane1.setText("Nice try, but that was INCORRECT. \n" + atBatPlayer + " hit a FOUL BALL\n" + "The right answer was " + c);
@@ -231,6 +249,7 @@ public class PlayBall extends JFrame implements MouseListener {
     }
 
     public void displayWrongPlaces(int c){
+        dBase.incorrectAnswer(gameID);
         textPane1.setText("");
         textPane1.setText("Nice try, but that was INCORRECT. \nThe right answer was " + c);
         SWINGButton.setText("Next Question");
@@ -245,7 +264,7 @@ public class PlayBall extends JFrame implements MouseListener {
         panel2.add(allGame);
         panel2.add(addGame);
         panel2.add(subGame);
-        //panel2.add(placeGame);
+        panel2.add(placeGame);
     }
 
     {
@@ -294,13 +313,14 @@ public class PlayBall extends JFrame implements MouseListener {
         Object source = e.getSource();
 
         if(source == addGame)
-            MathBaseball.makeGui('a');
+            MathBaseball.makeGui('a', dBase);
         if(source == subGame)
-            MathBaseball.makeGui('s');
+            MathBaseball.makeGui('s', dBase);
         if(source == allGame)
-            MathBaseball.makeGui('r');
-        if(source == placeGame)
-            MathBaseball.makeGui('p');
+            MathBaseball.makeGui('r', dBase);
+        if(source == placeGame){
+            MathBaseball.makeGui('p', dBase);
+        }
     }
 
 

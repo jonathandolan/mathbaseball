@@ -13,7 +13,7 @@ import java.util.Arrays;
 /**
  * Created by Febo on 2/9/14.
  */
-public class Register extends JPanel implements ActionListener, KeyListener {
+public class Register extends JFrame implements ActionListener {
 
 
     private JPanel panel1;
@@ -22,28 +22,44 @@ public class Register extends JPanel implements ActionListener, KeyListener {
     private JPasswordField passwordField2;
     private JFormattedTextField userNameFormattedTextField;
     private JFormattedTextField fullNameFormattedTextField;
+    private DBWrapper dBase;
+    private int WIDTH = 300;
+    private int HEIGHT = 500;
 
-    public Register() {
-        registerButton.addMouseListener(new MouseAdapter() {
+    public Register(DBWrapper db) {
+        super("Math Baseball");
+
+        dBase = db;
+        setSize(WIDTH, HEIGHT);
+        setBackground(Color.WHITE);
+        panel1 = new JPanel();
+        $$$setupUI$$$();
+        getContentPane().add(panel1);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setVisible(true);
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        addTeacher();
+                        return null;
+                    }
+                }.execute();
+            }
         });
     }
 
-    public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource();
-
-        if (source == registerButton) {
-            String teacherName = fullNameFormattedTextField.getText();
-            String userName = userNameFormattedTextField.getText();
-            char[] p1 = passwordField1.getPassword();
-            char[] p2 = passwordField2.getPassword();
-            if (compare(p1, p2)) {
-                //fullname & username & password
-                //Call Register with all information
-                this.setVisible(false);
-            } else
-                System.exit(0); //Passwords Don't Match --- Fix THIS
-        }
+    private void addTeacher(){
+    String[] names = fullNameFormattedTextField.getText().split("\\s");
+    String uName = userNameFormattedTextField.getText();
+    String pWord = new String(passwordField1.getPassword());
+        if(names.length == 2)
+    dBase.addNewTeacher(names[0], names[1], uName, pWord);
+    this.dispose();
     }
+
 
     public boolean compare(char[] one, char[] two) {
         return Arrays.equals(one, two);
@@ -114,5 +130,10 @@ public class Register extends JPanel implements ActionListener, KeyListener {
      */
     public JComponent $$$getRootComponent$$$() {
         return panel1;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
     }
 }

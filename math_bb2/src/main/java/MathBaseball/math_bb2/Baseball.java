@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.sql.SQLException;
 
 
 /**
@@ -27,9 +28,11 @@ public class Baseball extends JPanel implements ActionListener, KeyListener {
     private JButton loginButton;
     private JPanel panel1;
     private Main frame;
+    DBWrapper dBase;
 
-    public Baseball() {
+    public Baseball(){
         $$$setupUI$$$();
+
 
         loginButton.addActionListener(this);
         checkBox1.addActionListener(this);
@@ -37,7 +40,13 @@ public class Baseball extends JPanel implements ActionListener, KeyListener {
         passwordPasswordField.addKeyListener(this);
         usernameFormattedTextField.addKeyListener(this);
 
-
+        try{
+            dBase = new DBWrapper();
+        }
+        catch (SQLException e){
+            toLoginEnterYourTextPane.setText("Connection to Database failed.");
+            System.out.println("Cannot connect to the database.");
+        }
     }
 
 
@@ -54,12 +63,10 @@ public class Baseball extends JPanel implements ActionListener, KeyListener {
                 logInTeacher(usernameFormattedTextField.getText(), passwordPasswordField.getPassword());
             } else {
                 logInStudent(usernameFormattedTextField.getText(), passwordPasswordField.getPassword());
-                MainMenu mm = new MainMenu();
-                frame = new Main(mm.$$$getRootComponent$$$());
+
             }
         } else if (source == registerButton) {
-            Register r = new Register();
-            frame = new Main(r.$$$getRootComponent$$$());
+            Register r = new Register(dBase);
         }
     }
 
@@ -82,10 +89,21 @@ public class Baseball extends JPanel implements ActionListener, KeyListener {
     }
 
     public void logInStudent(String u, char[] p) {
-
+        String pWord = new String(p);
+        if(dBase.login(u, pWord)){
+        MainMenu mm = new MainMenu(dBase, u);
+        frame = new Main(mm.$$$getRootComponent$$$());
+        }
+        else{
+           toLoginEnterYourTextPane.setText("Login Failed: Try Again");
+        }
     }
 
     public void logInTeacher(String u, char[] p) {
+        String pWord = new String(p);
+        if(dBase.login(u, pWord)){
+        TeacherView t = new TeacherView(dBase, u);
+        }
 
     }
 
@@ -107,6 +125,7 @@ public class Baseball extends JPanel implements ActionListener, KeyListener {
         panel1.add(checkBox1, new GridConstraints(2, 0, 2, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel1.add(spacer1, new GridConstraints(0, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        //registerButton = new JButton();
         registerButton = new JButton();
         registerButton.setText("Register New User");
         panel1.add(registerButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

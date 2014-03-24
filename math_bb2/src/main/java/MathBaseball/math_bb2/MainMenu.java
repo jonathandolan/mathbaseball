@@ -22,8 +22,12 @@ public class MainMenu extends JPanel implements MouseListener {
     private PlayBall gui;
     private ManageTeam mTeam;
     private ViewStats vStats;
+    protected static String studentUserName;
+    DBWrapper dBase;
 
-    public MainMenu() {
+    public MainMenu(DBWrapper db, String uName) {
+        dBase = db;
+        studentUserName = uName;
         playBallLabel.addMouseListener(this);
         playBallLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         viewStatsButton.addMouseListener(this);
@@ -37,12 +41,12 @@ public class MainMenu extends JPanel implements MouseListener {
         Object source = e.getSource();
 
         if (source == playBallLabel) {
-            PlayBall p = new PlayBall();
+            PlayBall p = new PlayBall(dBase);
             //PlayBall gui = new PlayBall();
             //gui.beginGame();
         }
         if(source == viewStatsButton){
-            vStats = new ViewStats();
+            vStats = new ViewStats(dBase);
         }
         if(source == manageTeamButton){
             mTeam = new ManageTeam();
@@ -101,7 +105,7 @@ public class MainMenu extends JPanel implements MouseListener {
         panel1.add(manageTeamButton, new GridConstraints(0, 1, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         playBallLabel = new JLabel();
         playBallLabel.setFocusable(true);
-        playBallLabel.setIcon(new ImageIcon(getClass().getResource("./playBallButton.png")));
+        playBallLabel.setIcon(new ImageIcon("./playBallButton.png"));
         playBallLabel.setOpaque(false);
         playBallLabel.setText("");
         playBallLabel.setVisible(true);
