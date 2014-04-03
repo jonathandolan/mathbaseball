@@ -67,9 +67,10 @@ public class DBWrapper {
             
             
             newData2 = connect.prepareStatement(
-                    " insert into Student (studentID, teacherID) " + 
-                    " values (last_insert_id(), ?); ");
+                    " insert into Student (studentID, teacherID, teamTemplate) " + 
+                    " values (last_insert_id(), ?, ?); ");
             newData2.setInt(1, teacherID);
+            newData2.setInt(2, 1);
             newData2.executeUpdate();
         
             connect.commit();
@@ -444,6 +445,49 @@ public class DBWrapper {
         return studentInfo;
     }
     
+    public int getTeamTemplate(String username) {
+    	int templateNumber = 0;
+    	int studentID = -1;
+        PreparedStatement studentFinder = null;
+        PreparedStatement templateNumberFinder = null;
+        
+        try {
+            
+        	// Get student ID
+            studentFinder = connect.prepareStatement(
+                " select userID from User " +
+                " where username = ?; ");
+            studentFinder.setString(1, username);
+            ResultSet id = studentFinder.executeQuery();
+            if (id.next()) {
+                studentID = id.getInt(1);
+            }
+            
+            // Get the template number
+            templateNumberFinder = connect.prepareStatement(
+            		" select teamTemplate from Student " +
+            		" where studentID = ? ; ");
+            templateNumberFinder.setInt(1, studentID);
+            ResultSet templateNum = templateNumberFinder.executeQuery();
+            if(templateNum.next()) {
+            	templateNumber = templateNum.getInt(1);
+            }
+            
+        } catch (SQLException sqex) {
+            System.err.println(sqex.toString());
+        } finally {
+            if (studentFinder != null) {
+                try { studentFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+            if (templateNumberFinder != null) {
+                try { templateNumberFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+        }
+        
+        return templateNumber;
+    	
+    }
+    
     public void changeUsername(String oldUsername, String newUsername) {
         PreparedStatement newData = null;
         
@@ -532,33 +576,48 @@ public class DBWrapper {
         }     
     }
     
+    public void changeTeamTemplate(String username, int newTemplateNumber) {
+    	PreparedStatement newData = null;
+    	PreparedStatement studentFinder = null;
+    	int studentID = -1;
+        
+        try {
+        	
+            studentFinder = connect.prepareStatement(
+                " select userID from User " +
+                " where username = ?; ");
+            studentFinder.setString(1, username);
+            ResultSet id = studentFinder.executeQuery();
+            if (id.next()) {
+                studentID = id.getInt(1);
+            }
+        	
+            newData = connect.prepareStatement(
+                " update Student set teamTemplate = ? " + 
+                " where studentID = ? ; ");
+            newData.setInt(1, newTemplateNumber);
+            newData.setInt(2, studentID);
+            newData.executeUpdate();
+            connect.commit();
+        
+        } catch (SQLException sqex) {
+            try { connect.rollback(); System.err.println(sqex.toString()); }
+            catch (SQLException sqex2) { System.err.println("Dammit\n" + sqex2.toString()); }
+        } finally {
+            if (newData != null) {
+                try { newData.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+            if (studentFinder != null) {
+                try { studentFinder.close(); }  catch (SQLException sqex) { System.err.println(sqex.toString()); }
+            }
+        }     
+    }
+    
     
     public static void main(String[] args) throws SQLException {
     	DBWrapper db = new DBWrapper();
-    	ArrayList<StudentInfo> students;
-    	db.addNewTeacher("Greg", "Gagne", "ggagne", "softawre");
-    	db.addNewStudent("cfowles", "s", "Chris", "Fowles", "ggagne");
-    	db.addNewStudent("jdolan", "a", "Jonathan", "Dolan", "ggagne");
-    	int j = db.startNewGame("jdolan");
-	    int c = db.startNewGame("cfowles");
-	    db.correctAnswer(j);
-	    db.correctAnswer(j);
-	    db.correctAnswer(j);
-	    db.correctAnswer(j);
-	    db.incorrectAnswer(j);
-	    
-	    db.incorrectAnswer(c);
-	    db.incorrectAnswer(c);
-	    db.correctAnswer(c);
-	    db.correctAnswer(c);
-	    db.correctAnswer(c);
-	    
-	    students = db.getStudentInfoForTeacher("ggagne");
-	    
-	    for (StudentInfo s : students){
-	    	System.out.println(s.getFirstName()+ " " + s.getLastName());
-	    }
-	    
+    	
+    	
 	    
 	    db.close();
     }
