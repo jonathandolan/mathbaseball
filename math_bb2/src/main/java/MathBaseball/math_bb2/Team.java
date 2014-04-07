@@ -24,9 +24,9 @@ public class Team {
 	static Color[] colors = {Color.red, Color.blue, Color.yellow, Color.green, Color.pink};
 	static Color myColor;
 	//name templates
-	static String[][] names = {{"a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", },
-							   {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9", }, 
-							   {"c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", }};
+	static String[][] names = {{"Babe Ruth", "Walter Johnson", "Christy Mathewson", "Stan Musial", "Honus Wagner", "Johnny Bench", "Satchel Paige", "Frank Robinson", "Pete Rose", },
+							   {"Willie Mays", "Hank Aaron", "Ted Williams", "Joe DiMaggio", "Cy Young", "Mickey Mantle", "Roberto Clemente", "Lefty Grove", "Sandy Koufax", }, 
+							   {"Ty Cobb", "Lou Gehrig", "Rogers Hornsby", "Grover Alexander", "Jimmie Foxx", "Josh Gibson", "Warren Spahn", "Eddie Collins", "Tris Speaker", }};
 	static ArrayList<String> myNames = new ArrayList<String>();
 	
 	public Team(int templateId){
